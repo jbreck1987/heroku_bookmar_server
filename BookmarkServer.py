@@ -44,6 +44,7 @@
 import http.server
 import requests
 from urllib.parse import unquote, parse_qs
+import os
 
 memory = {}
 
@@ -131,7 +132,8 @@ class Shortener(http.server.BaseHTTPRequestHandler):
             self.send_header('Content-type', 'text/plain; charset=utf8')
             self.end_headers()
 
-            self.wfile.write('HTTP 400: Please submit values for both fields'.encode())
+            self.wfile.write(
+                'HTTP 400: Please submit values for both fields'.encode())
 
         longuri = params['longuri'][0]
         shortname = params['shortname'][0]
@@ -158,6 +160,7 @@ class Shortener(http.server.BaseHTTPRequestHandler):
 
 
 if __name__ == '__main__':
-    server_address = ('', 8000)
+    port = os.environ.get('PORT', 8000)
+    server_address = ('', port)
     httpd = http.server.HTTPServer(server_address, Shortener)
     httpd.serve_forever()
